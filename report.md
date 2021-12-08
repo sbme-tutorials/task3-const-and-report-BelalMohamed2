@@ -44,8 +44,6 @@ If we declare an object of class as const then the values of data members cannot
 
 
 
-
-
 ## 2-The usage of and & operator
 
 **In C++ there're two different syntax according to the place of the operator**
