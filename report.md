@@ -1,65 +1,301 @@
 # The usage of const keyword and & opertator
+## 1) Constant Variables in C++
+If you make any variable as constant, using const keyword, you cannot change its value. Also, the constant variables must be initialized while they are declared.
+```
+int main
+{
+    const int i = 10;
+    const int j = i + 10;     // works fine
+    i++;    // this leads to Compile time error   
+}
 
-## 1-The usage of const keyword in c++
+```
+In the above code we have made i as constant, hence if we try to change its value, we will get compile time error. Though we can use it for substitution for other variables.
 
-### 1-Constant Variables
-While declaring a variable as const it must be initialized as well. Once declared as const then we cannot change its value later on as shown in the example 1 below
+## 2) Pointers with const keyword in C++
+Pointers can be declared using const keyword too. When we use const with pointers, we can do it in two ways, either we can apply const to what the pointer is pointing to, or we can make the pointer itself a constant.
+*Pointer to a const variable*
+This means that the pointer is pointing to a const variable.
+```
+const int* u;
+```
+Here, u is a pointer that can point to a const int type variable. We can also write it like,
+```
+char const* v;
+```
+still it has the same meaning. In this case also, v is a pointer to an char which is of const type.
+Pointers to a const variable is very useful, as this can be used to make any string or array immutable(i.e they cannot be changed).
+*const Pointer*
+To make a pointer constant, we have to put the const keyword to the right of the *.
+```
+int x = 1;
+int* const w = &x;
+```
+Here, w is a pointer, which is const, that points to an int. Now we can't change the pointer, which means it will always point to the variable x but can change the value that it points to, by changing the value of x.
 
-**[Example 1](https://drive.google.com/file/d/1jKbMH5x6mEGqsVhnJ6yfebSUuibx7Uee/view?usp=sharing)**
+The constant pointer to a variable is useful where you want a storage that can be changed in value but not moved in memory. Because the pointer will always point to the same memory location, because it is defined with const keyword, but the value at that memory location can be changed.
 
-### 2-Using const with Pointers
-*We can make a pointer constant at time of declaration.
+**NOTE**: We can also have a const pointer pointing to a const variable.
+```
+const int* const x;
+```
+## 3) const Function Arguments and Return types
+We can make the return type or arguments of a function as const. Then we cannot change any of them.
+```
+void f(const int i)
+{
+    i++;    // error
+}
 
-*We can make the value constant to what the pointer is pointing to.
+const int g()
+{
+    return 1;
+}
+```
+**Some Important points to Remember**
+1.	For built in datatypes, returning a const or non-const value, doesn't make any difference.
+```
+const int h()
+{
+    return 1;
+}   
+	
+int main()
+{
+const int j = h();
+int k = h();
+}
+```
+Both j and k will be assigned the value 1. No error will occur.
+2. For user defined datatypes, returning const, will prevent its modification.
+3.	Temporary objects created while program execution are always of const type.
+4.	If a function has a non-const parameter, it cannot be passed a const argument while making a call.
 
-**Constant Pointers:**
+void t(int*) 
+{ 
+// function logic
+}
 
-if we want that a pointer variable must always point to the same variable then we can make it constant as shown in the example 2 below.
+If we pass a const int* argument to the function t, it will give error.
+5.	But, a function which has a const type parameter, can be passed a const type argument as well as a non-const argument.
+```
+void g(const int*) 	{
+    	    // function logic
+}
+```
+This function can have a int* as well as const int* type argument.
 
-**[Example 2.1](https://drive.google.com/file/d/18f8-FCI7w5UEL5TSorgoxnNuUAuR3sfZ/view?usp=sharing)**
+## 4) Defining Class Data members as const
+These are data variables in class which are defined using const keyword. They are not initialized during declaration. Their initialization is done in the constructor.
+```
+class Test
+{
+    const int i;
+    public:
+    Test(int x):i(x)
+    {
+        cout << "\ni value set: " << i;
+    }
+};
 
-**Pointer to Constant Variables**
+int main()
+{
+    Test t(10);
+    Test s(20);
+}
+```
+In this program, i is a constant data member, in every object its independent copy will be present, hence it is initialized with each object using the constructor. And once initialized, its value cannot be changed. The above way of initializing a class member is known as Initializer List in C++.
 
-A pointer to const means that we can access the value of the variable through pointer variable but cannot change the value of the pointed variable through the pointer variable as explained in example3.
+## 5) Defining Class Object as const
+When an object is declared or created using the const keyword, its data members can never be changed, during the object's lifetime.
 
-**[Example 2.2](https://drive.google.com/file/d/1wkDGnLJIYNWBhTsgURbnu76nufKTSpAF/view?usp=sharing)**
+```
+const class_name object;
+```
+For example, if in the class Test defined above, we want to define a constant object, we can do it like:
+```
+const Test r(30);
+```
+## 6) Defining Class's Member function as const
+A const member functions never modifies data members in an object.
 
-### 3-Constant Function Arguments
+Syntax:
+```
+return_type function_name() const;
+```
+Example for const Object and const Member function
+```
+class StarWars
+{
+    public:
+    int i;
+    StarWars(int x)    // constructor
+    { 
+        i = x; 
+    }
 
-We can use the const keyword with the arguments of a function. If an argument is declared as const then the function will not be allowed to change its value. The same is explained in the following code.
+    int falcon() const  // constant function
+    { 
+        /* 
+            can do anything but will not
+            modify any data members
+        */
+        cout << "Falcon has left the Base";
+    }
 
-**[Example 3](https://drive.google.com/file/d/1RC14zuQN_GrxF7i6TCjUrXrRCj6zzR-M/view?usp=sharing)**
+    int gamma()
+    { 
+        i++; 
+    }
+};
 
-### 4-Constant Data Members of a Class
+int main()
+{
+    StarWars objOne(10);        // non const object
+    const StarWars objTwo(20);      // const object
 
-If we define a const data member of a class then we must have to initialize that data member through the constructor of the class. The value of const data members cannot be changed through the object of the variable as shown in the code below.
+    objOne.falcon();     // No error
+    objTwo.falcon();     // No error
 
-**[Example 4](https://drive.google.com/file/d/1VGr5jInh8xbfjDrF6su-MEkJSwB8XkKN/view?usp=sharing)**
+    cout << objOne.i << objTwo.i;
 
-### 5-Constant Objects of a Class
+    objOne.gamma();     // No error
+    objTwo.gamma();     // Compile time error
+}
 
-If we declare an object of class as const then the values of data members cannot be changed later on. If we try to change the values of data members then compiler will generate an error as shown in the following code.
+Falcon has left the Base
+Falcon has left the Base
+10 20
+```
 
-**[Example 5](https://drive.google.com/file/d/1h8vG4tI4OVnvIER_heMlgzr-ATNVO1tL/view?usp=sharing)**
-
-
-
-## 2-The usage of and & operator
-
-**In C++ there're two different syntax according to the place of the operator**
-
-### 1-&variable; 
- extracts the address of the variable  
+Here, we can see, that const member function never changes data members of class, and it can be used with both const and non-const objecta. But a const object cannot be used with a member function which tries to change its data members.
 
 
-### 2-Type& ref = variable; 
- creates reference  to variable called ref as seen in the example
 
-the next example shows the two possible places
-**[Example 6](https://drive.google.com/file/d/1x9RtI170Gl2drqlZOhg4igY2kAG-PXvz/view?usp=sharing)**
+# **In C++ there're two different syntax according to the place of the & operator**
 
-### 3-Bitwise AND operator &&
-The output of bitwise AND is 1 if the corresponding bits of two operands is 1. If either bit of an operand is 0, the result of corresponding bit is evaluated to 0.and we use this operation in conditions as shown 
+
+## 1)Modify the passed parameters in a function: 
+If a function receives a reference to a variable, it can modify the value of the variable. For example, the following program variables are swapped using references. 
+```
+#include<iostream>
+using namespace std;
+  
+void swap (int& first, int& second)
+{
+    int temp = first;
+    first = second;
+    second = temp;
+}
+  
+int main()
+{
+    int a = 2, b = 3;
+    swap( a, b );
+    cout << a << " " << b;
+    return 0;
+}
+Output:
+
+ 3 2 
+ ```
+## Avoiding a copy of large structures:
+ Imagine a function that has to receive a large object. If we pass it without reference, a new copy of it is created which causes wastage of CPU time and memory. We can use references to avoid this
+```
+struct Student {
+string name;
+string address;
+int rollNo;
+}
+
+// If we remove & in below function, a new
+// copy of the student object is created.
+// We use const to avoid accidental updates
+// in the function as the purpose of the function
+// is to print s only.
+void print(const Student &s)
+{
+	cout << s.name << " " << s.address << " " << s.rollNo;
+}
+```
+## 3)In For Each Loops to modify all objects :
+ We can use references in for each loops to modify all elements.
+ ```
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+	vector<int> vect{ 10, 20, 30, 40 };
+
+	// We can modify elements if we
+	// use reference
+	for (int &x : vect)
+		x = x + 5;
+
+	// Printing elements
+	for (int x : vect)
+	cout << x << " ";
+
+	return 0;
+}
+```
+## 4)For Each Loop to avoid the copy of objects:
+ We can use references in each loop to avoid a copy of individual objects when objects are large.  
+```
+#include <bits/stdc++.h>
+using namespace std;
+
+int main()
+{
+	vector<string> vect{"geeksforgeeks practice",
+					"geeksforgeeks write",
+					"geeksforgeeks ide"};
+
+	// We avoid copy of the whole string
+	// object by using reference.
+	for (const auto &x : vect)
+	cout << x << endl;
+
+	return 0;
+}
+```
+## 5)Declaration of Reference variable is preceded with ‘&’ symbol ( but do not read it as “address of”).
+```
+#include <iostream>
+using namespace std;
+
+int main() {
+	int i=10; //simple or ordinary variable.
+	int *p=&i; //single pointer
+	int **pt=&p; //double pointer
+	int ***ptr=&pt; //triple pointer
+	// All the above pointers differ in the value they store or point to.
+	cout << "i=" << i << "\t" << "p=" << p << "\t"
+		<< "pt=" << pt << "\t" << "ptr=" << ptr << "\n";
+	int a=5; //simple or ordinary variable
+	int &S=a;
+	int &S0=S;
+	int &S1=S0;
+	cout << "a=" << a << "\t" << "S=" << S << "\t"
+		<< "S0=" << S0 << "\t" << "S1=" << S1 << "\n";
+	// All the above references do not differ in their values
+	// as they all refer to the same variable.
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
